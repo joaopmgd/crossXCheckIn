@@ -1,0 +1,56 @@
+users:
+- login: XXXX
+  password: XXXX
+  time: "06:15"
+  workout: "CROSSFIT"
+
+endpoints:
+  login:
+    url: http://api.appcrossx.com/v2/account/login
+    type: post
+  workoutlist:
+    url: http://api.appcrossx.com/v2/workout/day
+    type: get
+  checkin:
+    url: http://api.appcrossx.com/v2/workout/checkin
+    type: post
+
+requests:
+  login:
+    header:
+      Accept-Encoding: br, gzip, deflate
+      Content-Length: 52
+      Accept-Language: en-BR;q=1, pt-BR;q=0.9
+      User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
+      Accept: "*/*"
+      Connection: keep-alive
+      Content-Type: application/x-www-form-urlencoded
+    body:
+      email: ""
+      password: ""
+      type: 1
+
+  workoutlist:
+    header:
+      Accept-Encoding: br, gzip, deflate
+      Accept-Language: en-BR;q=1, pt-BR;q=0.9
+      User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
+      Accept: "*/*"
+      Connection: keep-alive
+      X-ACCESSTOKEN: ""
+    param:
+      date: 2018-12-04
+
+  checkin:
+    header:
+      Accept-Encoding: br, gzip, deflate
+      Content-Length: 31
+      Accept-Language: en-BR;q=1, pt-BR;q=0.9
+      User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
+      Accept: "*/*"
+      Connection: keep-alive
+      Content-Type: application/x-www-form-urlencoded
+      X-ACCESSTOKEN: ""
+    body:
+      time_id: "*/*"
+      workout_id: keep-alive
