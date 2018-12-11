@@ -24,10 +24,11 @@ type Endpoint struct {
 }
 
 type User struct {
-	Login    string `yaml:"login"`
-	Password string `yaml:"password"`
-	Time     string `yaml:"time"`
-	Workout  string `yaml:"workout"`
+	Login     string `yaml:"login"`
+	Password  string `yaml:"password"`
+	Time      string `yaml:"time"`
+	Workout   string `yaml:"workout"`
+	DaysAhead int    `yaml:"daysAhead"`
 }
 
 type Request struct {

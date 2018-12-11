@@ -5,27 +5,35 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/crossXCheckIn/config"
 	"github.com/crossXCheckIn/model"
+	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
 
 func MakeCheckInForEverybody(config *config.Config) {
 	for _, user := range config.Users {
-		config.Logger.Info("Loggin with ", user.Login)
+		config.Logger.Info("Logging with ", user.Login)
 		token, err := userLogin(user, config.Endpoints["login"], config.Requests["login"])
 		if err != nil {
-			config.Logger.Error(err, user.Login)
+			config.Logger.WithFields(log.Fields{
+				"user.Login": user.Login,
+			}).Error(err)
+			continue
 		}
 		config.Logger.Info("Searching workouts.")
-		workoutId, timeId, err := userGetWorkouts(token, user.Workout, user.Time, config.Endpoints["workoutlist"], config.Requests["workoutlist"])
+		workoutId, timeId, err := userGetWorkouts(token, user, config.Endpoints["workoutlist"], config.Requests["workoutlist"])
 		if err != nil {
-			config.Logger.Error(err)
+			config.Logger.WithFields(log.Fields{
+				"user.Workout": user.Workout,
+				"user.Time":    user.Time,
+				"login":        user.Login,
+			}).Error(err)
+			continue
 		}
 		config.Logger.Info("Making check-in.")
 		status, err := userMakeCheckIn(token, workoutId, timeId, config.Endpoints["checkin"], config.Requests["checkin"])
@@ -35,8 +43,14 @@ func MakeCheckInForEverybody(config *config.Config) {
 				"workoutId": workoutId,
 				"login":     user.Login,
 			}).Error(err)
+			continue
 		}
-		config.Logger.Info(user.Login, status)
+		config.Logger.WithFields(log.Fields{
+			"logins": user.Login,
+			"status": status,
+			"hour":   user.Time,
+			"login":  user.Login,
+		}).Info("Check-in done in 3 days.")
 	}
 }
 
@@ -46,6 +60,11 @@ func userLogin(user config.User, endpoint config.Endpoint, request config.Reques
 		"password": {user.Password},
 		"type":     {request.Body["type"]},
 	}
+	parameters := url.Values{}
+	parameters.Add("email", user.Login)
+	parameters.Add("password", user.Password)
+	parameters.Add("type", request.Body["type"])
+	request.Header["Content-Length"] = strconv.Itoa(len(parameters.Encode()))
 	var userLogin model.UserLogin
 	status := makeRequest(form, "POST", endpoint.Url, nil, request, &userLogin)
 	if status != "200 OK" {
@@ -54,12 +73,8 @@ func userLogin(user config.User, endpoint config.Endpoint, request config.Reques
 	return userLogin.Data.AccessToken, nil
 }
 
-func userGetWorkouts(token, workoutType, workoutHour string, endpoint config.Endpoint, request config.Request) (string, string, error) {
-	days, err := strconv.Atoi(os.Getenv("DAYS_FROM_NOW"))
-	if err != nil {
-		return "", "", errors.New("DAYS_FROM_NOW must be an integer.")
-	}
-	t := time.Now().Add(time.Hour * 24 * time.Duration(days))
+func userGetWorkouts(token string, user config.User, endpoint config.Endpoint, request config.Request) (string, string, error) {
+	t := time.Now().Add(time.Hour * 24 * time.Duration(user.DaysAhead))
 	query := make(map[string]string)
 	query["date"] = t.Format("2006-01-02")
 	request.Header["X-ACCESSTOKEN"] = token
@@ -68,7 +83,7 @@ func userGetWorkouts(token, workoutType, workoutHour string, endpoint config.End
 	if status != "200 OK" {
 		return "", "", errors.New("It was not possible to request the Workouts")
 	}
-	return findWorkoutData(workoutHour, workoutType, dayWorkouts.Data)
+	return findWorkoutData(user.Time, user.Workout, dayWorkouts.Data)
 }
 
 func userMakeCheckIn(token, workoutId, timeId string, endpoint config.Endpoint, request config.Request) (string, error) {
@@ -76,6 +91,10 @@ func userMakeCheckIn(token, workoutId, timeId string, endpoint config.Endpoint, 
 		"time_id":    {timeId},
 		"workout_id": {workoutId},
 	}
+	parameters := url.Values{}
+	parameters.Add("time_id", timeId)
+	parameters.Add("workout_id", workoutId)
+	request.Header["Content-Length"] = strconv.Itoa(len(parameters.Encode()))
 	request.Header["X-ACCESSTOKEN"] = token
 	status := makeRequest(form, "POST", endpoint.Url, nil, request, nil)
 	if status != "204 No Content" {
@@ -114,6 +133,7 @@ func makeRequest(form url.Values, method, endpoint string, query map[string]stri
 		json.NewDecoder(resp.Body).Decode(target)
 	}
 
+	spew.Dump(resp.Body)
 	return resp.Status
 }
 
@@ -132,3 +152,6 @@ func findWorkoutData(workoutStartHour, workoutType string, workoutsData []model.
 	}
 	return workoutId, timeId, errors.New("No workout found with the specified config")
 }
+
+// TODO: add weekdays hour and weekends hour
+// TODO: add gympass call

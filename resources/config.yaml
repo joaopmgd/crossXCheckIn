@@ -1,8 +1,8 @@
 users:
-- login: XXXX
-  password: XXXX
-  time: "06:15"
-  workout: "CROSSFIT"
+# - login: ####
+#   password: ####
+#   time: "06:15"
+  # workout: "CROSSFIT"
 
 endpoints:
   login:
@@ -19,7 +19,7 @@ requests:
   login:
     header:
       Accept-Encoding: br, gzip, deflate
-      Content-Length: 52
+      Content-Length: ""
       Accept-Language: en-BR;q=1, pt-BR;q=0.9
       User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
       Accept: "*/*"
@@ -44,7 +44,7 @@ requests:
   checkin:
     header:
       Accept-Encoding: br, gzip, deflate
-      Content-Length: 31
+      Content-Length: ""
       Accept-Language: en-BR;q=1, pt-BR;q=0.9
       User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
       Accept: "*/*"
@@ -52,5 +52,5 @@ requests:
       Content-Type: application/x-www-form-urlencoded
       X-ACCESSTOKEN: ""
     body:
-      time_id: "*/*"
-      workout_id: keep-alive
+      time_id: ""
+      workout_id: ""
