@@ -24,11 +24,13 @@ type Endpoint struct {
 }
 
 type User struct {
-	Login     string `yaml:"login"`
-	Password  string `yaml:"password"`
-	Time      string `yaml:"time"`
-	Workout   string `yaml:"workout"`
-	DaysAhead int    `yaml:"daysAhead"`
+	Login       string `yaml:"login"`
+	Password    string `yaml:"password"`
+	WeekdayHour string `yaml:"weekdayHour"`
+	WeekendHour string `yaml:"weekendHour"`
+	Workout     string `yaml:"workout"`
+	DaysAhead   int    `yaml:"daysAhead"`
+	Token       string `yaml:"token"`
 }
 
 type Request struct {
@@ -47,7 +49,6 @@ func GetConfig() (*Config, error) {
 
 // getConfigPath gets the path for the configuration file from the env var of from the arguments
 func getConfigPath() (string, error) {
-	// cp := os.Getenv("CONFIG")
 	cp := "resources/config.yaml"
 	if args := flag.Args(); len(args) == 1 {
 		cp = args[0]

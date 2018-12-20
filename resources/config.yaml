@@ -1,8 +1,12 @@
 users:
-# - login: ####
-#   password: ####
-#   time: "06:15"
-  # workout: "CROSSFIT"
+
+# - login: 
+#   password:
+#   weekdayHour: "06:15"
+#   weekendHour: "10:30"
+#   workout: "CROSSFIT"
+#   daysAhead: 3
+#   token: 
 
 endpoints:
   login:
@@ -19,7 +23,7 @@ requests:
   login:
     header:
       Accept-Encoding: br, gzip, deflate
-      Content-Length: ""
+      Content-Length: 53
       Accept-Language: en-BR;q=1, pt-BR;q=0.9
       User-Agent: CrossX/1.9.1 (iPhone; iOS 12.1; Scale/3.00)
       Accept: "*/*"
