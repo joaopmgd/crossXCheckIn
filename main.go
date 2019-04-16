@@ -15,3 +15,4 @@ func main() {
 	}
 	app.MakeCheckInForEverybody(config)
 }
+ 

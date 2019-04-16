@@ -6,25 +6,31 @@ type DayWorkouts struct {
 }
 
 type WorkoutData struct {
-	Id      int     `json:"id"`
+	ID      int     `json:"id"`
 	Name    string  `json:"name"`
 	Workout Workout `json:"workout"`
 }
 
 type Workout struct {
-	Id               int              `json:"id"`
+	ID               int              `json:"id"`
 	Date             string           `json:"date"`
 	Created          string           `json:"created"`
-	Tecniques        []string         `json:"tecniques"`
-	Warmups          []string         `json:"warmups"`
+	Tecniques        []Tecnique       `json:"tecniques"`
+	Warmups          []Tecnique       `json:"warmups"`
 	Wods             []Wod            `json:"wods"`
 	Hours            []WorkoutHours   `json:"hours"`
 	Results          []string         `json:"results"`
 	ResultCategories ResultCategories `json:"result_categories"`
 }
 
+type Tecnique struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Exercises string `json:"exercises"`
+}
+
 type Wod struct {
-	Id                 string        `json:"id"`
+	ID                 string        `json:"id"`
 	Name               string        `json:"name"`
 	Exercises          string        `json:"exercises"`
 	Result_types       []ResultTypes `json:"result_types"`
@@ -34,7 +40,7 @@ type Wod struct {
 }
 
 type WorkoutHours struct {
-	Id            int    `json:"id"`
+	ID            int    `json:"id"`
 	StartTime     string `json:"startTime"`
 	EndTime       string `json:"endTime"`
 	Coach         User   `json:"coach"`

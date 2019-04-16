@@ -138,19 +138,17 @@ func makeRequest(form url.Values, method, endpoint string, query map[string]stri
 }
 
 func findWorkoutData(workoutStartHour, workoutType string, workoutsData []model.WorkoutData) (string, string, error) {
-	var workoutId, timeId string
+	var workoutID, timeID string
 	for _, workoutData := range workoutsData {
 		if workoutData.Name == workoutType {
-			workoutId = strconv.Itoa(workoutData.Workout.Id)
+			workoutID = strconv.Itoa(workoutData.Workout.ID)
 			for _, workoutHour := range workoutData.Workout.Hours {
 				if workoutHour.StartTime == workoutStartHour {
-					timeId = strconv.Itoa(workoutHour.Id)
-					return workoutId, timeId, nil
+					timeID = strconv.Itoa(workoutHour.ID)
+					return workoutID, timeID, nil
 				}
 			}
 		}
 	}
-	return workoutId, timeId, errors.New("No workout found with the specified config")
+	return workoutID, timeID, errors.New("No workout found with the specified config")
 }
-
-// TODO: add gympass call
